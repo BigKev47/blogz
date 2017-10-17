@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>New Post</h1>
+    <form method='post' action='/signup'>
+        <label>
+            Title: <br>
+            <br>
+            <input type="text" name='slug' />
+            <span class="error">{{ error1 }}</span>
+        </label><br><br><br>
+        <label>
+            Body:<br>
+            <br>
+            <textarea name='body' cols = "100" rows="15"></textarea>
+            <span class="error">{{ error2 }}</span>
+        </label><br><br><br>
+        <input type="submit" value='Add Post' />
+    </form>
+
+    <hr />
+
+{% endblock %}

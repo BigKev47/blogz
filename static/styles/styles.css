@@ -1,0 +1,35 @@
+/*
+input[type=textarea] {
+            width: 600px;
+            height: 150px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            background-color: #f8f8f8;
+            resize: none;
+            }
+*/
+
+.error {
+        color: red;
+            }
+            
+input[type=text] {
+            width: 400px;
+            box-sizing: border-box;
+            resize:none;
+            }
+             
+
+h3 {
+    font-size:25px;
+    font-family: "Arial";
+    }
+label {
+    font-family: sans-serif;
+    font-weight: bold;
+    }
+    
+h1 {
+    font-family:Sans-serif;
+    }
+            
