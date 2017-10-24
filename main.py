@@ -1,4 +1,3 @@
-
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -17,8 +16,8 @@ class Blog(db.Model):
     body = db.Column(db.String(1000))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, name, body, owner):
-        self.slug = name
+    def __init__(self, slug, body, owner):
+        self.slug = slug
         self.body = body
         self.owner = owner
 
@@ -34,19 +33,26 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
+    allowed_routes = ['login', 'signup','blog']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
+@app.route('/logout', methods=['POST', 'GET'])
+def logout():
+    del session['username']
+    return redirect('/')
+
 @app.route('/new_post', methods=['POST', 'GET'])
-def new_post(owner): 
-    return render_template('newpost.html', owner = owner, title="New Blog Post")
+def new_post():
+    owner = User.query.filter_by(username=session['username']).first()
+    return render_template('newpost.html', title="New Blog Post")
     
 @app.route('/redirect', methods=['GET','POST'])
-def new_post_redirect(owner):
+def new_post_redirect():
     if request.method == 'POST':
         blog_slug = request.form['slug']
         blog_body = request.form['body']
+        owner = User.query.filter_by(username=session['username']).first()
         if blog_slug == "":
             return render_template('newpost.html', title='New Blog Post', error1 = "Give your post a title!")
         if blog_body == "":
@@ -57,7 +63,6 @@ def new_post_redirect(owner):
     id = Blog.query.order_by(Blog.id.desc()).first().id
     
     return redirect("/blog?id="+str(id))
-    
 
 @app.route('/blog', methods = ['POST','GET'])
 def index():
@@ -74,14 +79,16 @@ def index():
 def login():
     if request.method == 'POST':
         username = request.form['username']
+        error = ""
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if user and user.password == password:
-            session['owner'] = username
-            flash("Logged in")
+            session['username'] = username 
             return redirect('/')
+        elif user:
+            return render_template('login.html',error2 = "Incorrect password")
         else:
-            flash('User password incorrect, or user does not exist', 'error')
+            return render_template('login.html',error1 = 'User does not exist')
 
     return render_template('login.html')
 
@@ -103,7 +110,23 @@ def signup():
 
     return render_template('signup.html')
 
-@app.route('/', methods=['GET'])
+def is_valid(response):
+    if response != "":
+        if " " not in response:
+            if 2<len(response)<21:
+                return ""
+            return "Field must be between 3-20 characters."
+        return "Field cannot contain spaces."
+    else:
+        return "No input"
+
+def password_match(first_PW,conf):
+    if first_PW == conf:
+        return ""
+    else:
+        return "Passwords do not match."
+
+@app.route('/', methods=['GET', 'POST'])
 def get_start():
     return redirect('/blog')
 
