@@ -12,14 +12,18 @@ input[type=textarea] {
 .error {
         color: red;
             }
+/*
             
 input[type=text] {
-            width: 400px;
             box-sizing: border-box;
             resize:none;
             }
-             
+*/
 
+.byline {
+    font-size:12px;
+     font-weight:light;
+     }    
 h3 {
     font-size:25px;
     font-family: "Arial";
