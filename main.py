@@ -98,24 +98,27 @@ def signup():
         username = request.form['username']
         password = request.form['password']
         verify = request.form['verify']
-        existing_user = User.query.filter_by(username=username).first()
+        existing_user = User.query.filter_by(username=username).first() 
         if not existing_user:
-            new_user = User(username, password)
-            db.session.add(new_user)
-            db.session.commit()
-            session['username'] = username
-            return redirect('/')
+            if [is_valid(username),is_valid(password),password_match(password,verify)] == ["","",""]:
+                new_user = User(username, password)
+                db.session.add(new_user)
+                db.session.commit()
+                session['username'] = username
+                return render_template('newpost.html')
         else:
-            return "<h1>That username is already taken.</h1>"
+            if existing_user:
+                return render_template('signup.html', error1 = "User already registered.")
+        return render_template('signup.html', error1 = is_valid(username), error2 = is_valid(password), error3 = password_match(password,verify))
 
     return render_template('signup.html')
 
 def is_valid(response):
     if response != "":
         if " " not in response:
-            if 2<len(response)<21:
+            if 2<len(response):
                 return ""
-            return "Field must be between 3-20 characters."
+            return "Field must be at least 3 characters."
         return "Field cannot contain spaces."
     else:
         return "No input"
