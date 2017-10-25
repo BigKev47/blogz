@@ -10,7 +10,8 @@
         <ul>
             {% for blog in blogs %}
             <li><h2><a href="/blog?id={{blog.id}}">{{ blog.slug }}</a></h2>
-            <p>{{ blog.body }}</p></li>
+            <p>{{ blog.body }}</p>
+            <p class='byline'>Posted by <a href="/blog?user={{blog.owner.id}}">{{blog.owner.username}}</a></p></li>
             {% endfor %}
         </ul>
 

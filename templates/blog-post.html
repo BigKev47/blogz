@@ -3,4 +3,5 @@
 {% block content %}
     <h1>{{ entry.slug }}</h1><br>
     <p>{{ entry.body }}</p>
+    <p class='byline'>Posted by <a href="/blog?user={{entry.owner.id}}">{{entry.owner.username}}</a></p>
 {% endblock %}

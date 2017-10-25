@@ -33,7 +33,7 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup','blog']
+    allowed_routes = ['login', 'signup','blog', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -65,11 +65,15 @@ def new_post_redirect():
     return redirect("/blog?id="+str(id))
 
 @app.route('/blog', methods = ['POST','GET'])
-def index():
+def blog():
     if request.args.get('id') != None:
         id = request.args.get('id')
         entry = Blog.query.filter(Blog.id==id).one()
         return render_template('blog-post.html', entry = entry)
+    elif request.args.get('user') != None:
+        user = request.args.get('user')
+        blogs = Blog.query.filter(Blog.owner_id==user).all()
+        return render_template('blog.html', blogs=blogs)
     else:
         blogs = Blog.query.all()
         return render_template('blog.html',title="My Blog", 
@@ -130,8 +134,9 @@ def password_match(first_PW,conf):
         return "Passwords do not match."
 
 @app.route('/', methods=['GET', 'POST'])
-def get_start():
-    return redirect('/blog')
+def index():
+    users = User.query.all()
+    return render_template('index.html', users=users)
 
 if __name__ == '__main__':
     app.run()
